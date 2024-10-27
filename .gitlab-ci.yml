@@ -1,0 +1,24 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+variables:
+  IMAGE_TAG: 24.10.27
+  FRONTEND_IMAGE: xela_frontend
+  SERVER_IMAGE: xela_server
+
+stages:
+    - build
+
+build:
+  stage: build
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master'
+  before_script:
+    - docker login -u "${REGISTRY_USER}" -p "${REGISTRY_PASSWORD}" "${CI_REGISTRY}"
+  script:
+    - docker build -t $FRONTEND_IMAGE:$IMAGE_TAG ./frontend
+    - docker build -t $SERVER_IMAGE:$IMAGE_TAG ./server
+    - docker push $FRONTEND_IMAGE:$IMAGE_TAG
+    - docker push $SERVER_IMAGE:$IMAGE_TAG

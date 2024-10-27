@@ -1,0 +1,14 @@
+model User {
+  id             Int                 @id @default(autoincrement())
+  email          String              @unique
+  name           String?
+  password       String
+  otp            String?
+  otpPurpose     OtpPurpose?
+  cryptoProfiles UserCryptoProfile[]
+}
+
+enum OtpPurpose {
+  VERIFY_ACCOUNT
+  RESET_PASSWORD
+}
