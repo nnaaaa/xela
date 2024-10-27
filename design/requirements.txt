@@ -1,0 +1,2 @@
+diagrams # brew install graphviz
+mypy # type checking in vscode

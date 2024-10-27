@@ -1,0 +1,47 @@
+view asset_price_5m {
+  open_time   DateTime @db.Timestamp(6)
+  assetInfoId String
+  openPrice   Float?
+  closePrice  Float?
+  highPrice   Float?
+  lowPrice    Float?
+  volume      Float?
+
+  @@unique([assetInfoId, open_time])
+}
+
+view asset_price_1h {
+  open_time   DateTime @db.Timestamp(6)
+  assetInfoId String
+  openPrice   Float?
+  closePrice  Float?
+  highPrice   Float?
+  lowPrice    Float?
+  volume      Float?
+
+  @@unique([assetInfoId, open_time])
+}
+
+view asset_price_1d {
+  open_time   DateTime @db.Timestamp(6)
+  assetInfoId String
+  openPrice   Float?
+  closePrice  Float?
+  highPrice   Float?
+  lowPrice    Float?
+  volume      Float?
+
+  @@unique([assetInfoId, open_time])
+}
+
+view asset_price_1M {
+  open_time   DateTime @db.Timestamp(6)
+  assetInfoId String
+  openPrice   Float?
+  closePrice  Float?
+  highPrice   Float?
+  lowPrice    Float?
+  volume      Float?
+
+  @@unique([assetInfoId, open_time])
+}

@@ -1,0 +1,64 @@
+model UserCryptoProfile {
+  profileId          String                    @id @default(uuid())
+  userId             Int
+  exchanges          String                    @default("binance")
+  tradingType        TradingType
+  apiKey             String
+  secretKey          String
+  updateTime         DateTime?
+  balances           AssetBalance[]
+  historicalBalances HistoricalCryptoBalance[]
+  user               User                      @relation(fields: [userId], references: [id])
+}
+
+model AssetBalance {
+  id              String            @id @default(uuid())
+  cryptoProfileId String
+  assetInfoId     String
+  balance         Float
+  locked          Float
+  assetInfo       AssetInfo         @relation(fields: [assetInfoId], references: [id])
+  cryptoProfile   UserCryptoProfile @relation(fields: [cryptoProfileId], references: [profileId])
+}
+
+model AssetInfo {
+  id            String         @id @default(uuid())
+  name          String
+  symbol        String
+  category      String
+  desc          String
+  logo          String
+  assetBalances AssetBalance[]
+  assetPrices   AssetPrice[]
+}
+
+model AssetPrice {
+  assetInfoId String
+  interval    String
+  open_time   DateTime
+  close_time  DateTime
+  openPrice   Float
+  closePrice  Float
+  highPrice   Float
+  lowPrice    Float
+  volume      Float
+  assetInfo   AssetInfo @relation(fields: [assetInfoId], references: [id])
+
+  @@unique([assetInfoId, open_time])
+}
+
+model HistoricalCryptoBalance {
+  cryptoProfileId  String
+  time             DateTime
+  estimatedBalance Float
+  changePercent    Float
+  changeBalance    Float
+  cryptoProfile    UserCryptoProfile @relation(fields: [cryptoProfileId], references: [profileId])
+
+  @@unique([cryptoProfileId, time])
+}
+
+enum TradingType {
+  FUTURES
+  SPOT
+}
