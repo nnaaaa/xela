@@ -1,45 +1,51 @@
-'use client';
+"use client";
 
-import {Menu, Package2, Search} from "lucide-react"
-import Link from "next/link"
+import { Menu, Package2, Search } from "lucide-react";
+import Link from "next/link";
 
-import {Button} from "@/components/ui/button"
-import {Input} from "@/components/ui/input"
-import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet"
-import {ThemeSwitcher} from "@/app/home/components/header/ThemeSwitcher";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { ThemeSwitcher } from "@/app/home/components/header/ThemeSwitcher";
 import Logo from "@/components/ui/logo";
 import DASHBOARD_ROUTE from "@/lib/routes/dashboard.route";
-import {useAppSelector} from "@/state/hooks";
-import {ProfileDropdownMenu} from "@/app/home/components/header/ProfileDropdownMenu";
-import {usePathname} from "next/navigation";
-import {cn} from "@/lib/utils";
+import { useAppSelector } from "@/state/hooks";
+import { ProfileDropdownMenu } from "@/app/home/components/header/ProfileDropdownMenu";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 import LoginButton from "@/app/home/components/header/LoginButton";
 
 const TABS = [
     {
         route: DASHBOARD_ROUTE.value,
-        title: "Dashboard"
+        title: "Dashboard",
     },
     {
         route: "#",
-        title: "Products"
+        title: "Products",
     },
-]
+];
 
 export default function Header() {
-    const currentPath = usePathname()
-    const { state: { user }} = useAppSelector(state => state.auth);
+    const currentPath = usePathname();
+    const {
+        state: { user },
+    } = useAppSelector((state) => state.auth);
 
     return (
         <header className="sticky top-0 flex items-center gap-4 border-b bg-background px-4 py-3 md:px-6">
-            <nav
-                className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
-                <Logo/>
-                {TABS.map(t => (
+            <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
+                <Logo />
+                {TABS.map((t) => (
                     <Link
                         key={t.route}
                         href={t.route}
-                        className={cn("transition-colors hover:text-foreground", t.route === currentPath ? "text-foreground" : "text-muted-foreground")}
+                        className={cn(
+                            "transition-colors hover:text-foreground",
+                            t.route === currentPath
+                                ? "text-foreground"
+                                : "text-muted-foreground",
+                        )}
                     >
                         {t.title}
                     </Link>
@@ -52,7 +58,7 @@ export default function Header() {
                         size="icon"
                         className="shrink-0 md:hidden"
                     >
-                        <Menu className="h-5 w-5"/>
+                        <Menu className="h-5 w-5" />
                         <span className="sr-only">Toggle navigation menu</span>
                     </Button>
                 </SheetTrigger>
@@ -62,7 +68,7 @@ export default function Header() {
                             href="#"
                             className="flex items-center gap-2 text-lg font-semibold"
                         >
-                            <Package2 className="h-6 w-6"/>
+                            <Package2 className="h-6 w-6" />
                             <span className="sr-only">Acme Inc</span>
                         </Link>
                         <Link
@@ -98,7 +104,7 @@ export default function Header() {
             <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
                 <form className="ml-auto flex-1 sm:flex-initial">
                     <div className="relative">
-                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"/>
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             type="search"
                             placeholder="Search products..."
@@ -106,9 +112,8 @@ export default function Header() {
                         />
                     </div>
                 </form>
-                <ThemeSwitcher/>
-                {user ? <ProfileDropdownMenu/> : <LoginButton/>}
-
+                <ThemeSwitcher />
+                {user ? <ProfileDropdownMenu /> : <LoginButton />}
 
                 {/* <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -128,6 +133,5 @@ export default function Header() {
                     </DropdownMenu> */}
             </div>
         </header>
-    )
+    );
 }
-

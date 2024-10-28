@@ -1,36 +1,63 @@
-import Link from "next/link"
+import Link from "next/link";
 
-import {Button} from "@/components/ui/button"
-import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
-import {Input} from "@/components/ui/input"
-import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import {useForm} from "react-hook-form";
-import {SignupMutation, SignupMutationVariables, UserCreateInput} from "@/gql/graphql";
-import {zodResolver} from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import {
+    SignupMutation,
+    SignupMutationVariables,
+    UserCreateInput,
+} from "@/gql/graphql";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useAppDispatch, useAppSelector } from "@/state/hooks";
-import {useRouter} from "next/navigation";
-import {authActions} from "@/state/slices/auth.slice";
-import {z} from "zod";
-import {useMutation} from "@apollo/client";
-import {SIGNUP_MUTATION} from "@/api/auth";
+import { useRouter } from "next/navigation";
+import { authActions } from "@/state/slices/auth.slice";
+import { z } from "zod";
+import { useMutation } from "@apollo/client";
+import { SIGNUP_MUTATION } from "@/api/auth";
 import AUTH_ROUTE from "@/lib/routes/auth.route";
 import { GraphQLError } from "graphql/error";
 import ButtonWithLoading from "@/components/ui/button-with-loading";
 
 interface ISignupForm extends UserCreateInput {
-    name: string
+    name: string;
     confirmPassword: string;
 }
 
-const signupSchema = z.object({
-    name: z.string().default(''),
-    email: z.string().min(1, 'please enter a valid email').email("Email is not valid").default(''),
-    password: z.string().min(8, "Password must have more than 8 character").default(''),
-    confirmPassword: z.string().default('')
-}).refine((data) => data.password === data.confirmPassword, {
-    message: "Password doesn't match",
-    path: ["confirmPassword"],
-});
+const signupSchema = z
+    .object({
+        name: z.string().default(""),
+        email: z
+            .string()
+            .min(1, "please enter a valid email")
+            .email("Email is not valid")
+            .default(""),
+        password: z
+            .string()
+            .min(8, "Password must have more than 8 character")
+            .default(""),
+        confirmPassword: z.string().default(""),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+        message: "Password doesn't match",
+        path: ["confirmPassword"],
+    });
 
 export function SignupForm() {
     const form = useForm<ISignupForm>({
@@ -39,31 +66,38 @@ export function SignupForm() {
             name: "",
             email: "",
             password: "",
-            confirmPassword: ""
-        }
-    })
-    const { setError, formState: { errors }  } = form;
-    const { loading} = useAppSelector(state => state.auth)
-    const [signup] = useMutation<SignupMutation, SignupMutationVariables>(SIGNUP_MUTATION)
-    const dispatch = useAppDispatch()
-    const router = useRouter()
+            confirmPassword: "",
+        },
+    });
+    const {
+        setError,
+        formState: { errors },
+    } = form;
+    const { loading } = useAppSelector((state) => state.auth);
+    const [signup] = useMutation<SignupMutation, SignupMutationVariables>(
+        SIGNUP_MUTATION,
+    );
+    const dispatch = useAppDispatch();
+    const router = useRouter();
 
     async function onSubmit(signupFormData: ISignupForm) {
         try {
-            const { confirmPassword, ...signupDto} = signupFormData
-            await signup({variables: {data: signupDto} })
-            await dispatch(authActions.loginWithPassword({
-                email: signupDto.email,
-                password: signupDto.password,
-            }));
-            await dispatch(authActions.loginWithToken())
-            router.push(AUTH_ROUTE.verifyAccount.value)
+            const { confirmPassword, ...signupDto } = signupFormData;
+            await signup({ variables: { data: signupDto } });
+            await dispatch(
+                authActions.loginWithPassword({
+                    email: signupDto.email,
+                    password: signupDto.password,
+                }),
+            );
+            await dispatch(authActions.loginWithToken());
+            router.push(AUTH_ROUTE.verifyAccount.value);
         } catch (error: GraphQLError) {
             if (error?.message === "Account already exists") {
                 setError("email", {
                     type: "manual",
-                    message: "Account already exists"
-                })
+                    message: "Account already exists",
+                });
             }
         }
     }
@@ -73,54 +107,63 @@ export function SignupForm() {
             <CardHeader>
                 <CardTitle>Signup</CardTitle>
                 <CardDescription>
-                    Ready to join? Please enter your details and start journey with us.
+                    Ready to join? Please enter your details and start journey
+                    with us.
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="space-y-4"
+                    >
                         <FormField
                             control={form.control}
                             name="name"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Your full name</FormLabel>
                                     <FormControl>
                                         <Input {...field} />
                                     </FormControl>
-                                    <FormMessage/>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
                         <FormField
                             control={form.control}
                             name="email"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Email</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="example@gmail.com" {...field}/>
+                                        <Input
+                                            placeholder="example@gmail.com"
+                                            {...field}
+                                        />
                                     </FormControl>
-                                    {!errors.email && <FormDescription>
-                                        This is your login account.
-                                    </FormDescription>}
-                                    <FormMessage/>
+                                    {!errors.email && (
+                                        <FormDescription>
+                                            This is your login account.
+                                        </FormDescription>
+                                    )}
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
                         <FormField
                             control={form.control}
                             name="password"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Password</FormLabel>
                                     <FormControl>
-                                        <Input {...field} type="password"/>
+                                        <Input {...field} type="password" />
                                     </FormControl>
                                     <FormDescription>
                                         Enter your password
                                     </FormDescription>
-                                    <FormMessage/>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
@@ -128,22 +171,25 @@ export function SignupForm() {
                         <FormField
                             control={form.control}
                             name="confirmPassword"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Confirm password</FormLabel>
                                     <FormControl>
-                                        <Input {...field} type="password"/>
+                                        <Input {...field} type="password" />
                                     </FormControl>
                                     <FormDescription>
                                         Confirm your password
                                     </FormDescription>
-                                    <FormMessage/>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
 
-
-                        <ButtonWithLoading loading={loading} type="submit" className="w-full">
+                        <ButtonWithLoading
+                            loading={loading}
+                            type="submit"
+                            className="w-full"
+                        >
                             Signup
                         </ButtonWithLoading>
                         <div
@@ -153,7 +199,8 @@ export function SignupForm() {
                                 before:flex-1 before:border-t after:border-t
                                 before:border-t-border after:border-t-border
                                 before:me-6 after:flex-1
-                                after:ms-6 dark:text-white">
+                                after:ms-6 dark:text-white"
+                        >
                             OR
                         </div>
                         <Button variant="outline" className="w-full">
@@ -170,5 +217,5 @@ export function SignupForm() {
                 </Form>
             </CardContent>
         </Card>
-    )
+    );
 }

@@ -12,7 +12,6 @@ import { AuthParams } from "@/lib/constants/params";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import { getMainDefinition } from "@apollo/client/utilities";
-import '@/lib/envConfig';
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
     if (graphQLErrors)
@@ -50,7 +49,7 @@ const authLink = setContext((operation, previousContext) => {
 
 const wsLink = new GraphQLWsLink(
     createClient({
-        url: process.env.SUBSCRIPTION_SERVER,
+        url: process.env.SUBSCRIPTION_SERVER || "ws://localhost:5000/graphql",
         lazy: true,
         connectionParams: {},
     }),

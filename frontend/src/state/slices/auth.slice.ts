@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { AppThunk } from "@/state/store";
 import {
     GetMeQuery,
     LoginMutation,
@@ -13,7 +12,6 @@ import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import { AuthParams } from "@/lib/constants/params";
 import client from "@/api";
 import { GET_ME, LOGIN_MUTATION, VERIFY_ACCOUNT_MUTATION } from "@/api/auth";
-import { GraphQLError } from "graphql/error";
 
 interface IinitState {
     loading: boolean;
@@ -33,28 +31,6 @@ const initialState: IinitState = {
         isVerified: false,
     },
 };
-
-// const loginAsync = createAsyncThunk('auth/login', async (credential: SignInType) => {
-//     const res = await authAPI.postLogin(credential)
-//     if (res.data.accessToken) {
-//         Cookie.set('token', res.data.accessToken)
-//         await userAPI.updateProfile({ isOnline: true })
-//     } else {
-//         throw new Error()
-//     }
-// })
-//
-// const registerAsync = createAsyncThunk(
-//     'auth/register',
-//     async (userInfo: Partial<IUser>) => {
-//         try {
-//             const res = await authAPI.postRegister(userInfo)
-//             console.log(res)
-//         } catch (e) {
-//             console.error(e)
-//         }
-//     }
-// )
 
 const authSlice = createSlice({
     name: "auth",
@@ -89,7 +65,7 @@ const authSlice = createSlice({
             })
             .addCase(verifyAccount.rejected, (state, payload) => {
                 state.loading = false;
-                state.error = payload.error.message;
+                state.error = payload.error.message || "Something went wrong";
             })
             .addCase(verifyAccount.fulfilled, (state) => {
                 state.loading = false;
@@ -100,7 +76,7 @@ const authSlice = createSlice({
             })
             .addCase(loginWithPassword.rejected, (state, payload) => {
                 state.loading = false;
-                state.error = payload.error.message;
+                state.error = payload.error.message || "Something went wrong";
             })
             .addCase(loginWithPassword.fulfilled, (state) => {
                 state.loading = false;
@@ -111,7 +87,7 @@ const authSlice = createSlice({
             })
             .addCase(loginWithToken.rejected, (state, payload) => {
                 state.loading = false;
-                state.error = payload.error.message;
+                state.error = payload.error.message || "Something went wrong";
             })
             .addCase(loginWithToken.fulfilled, (state) => {
                 state.loading = false;
@@ -148,29 +124,21 @@ const loginWithPassword = createAsyncThunk(
 );
 const loginWithToken = createAsyncThunk(
     "auth/loginWithToken",
-    async (loginDto: LoginReqDto, { dispatch }) => {
-        const accessToken = getCookie(AuthParams.ACCESS_TOKEN);
-        if (!accessToken) {
-            return;
+    async (_, { dispatch }) => {
+        try {
+            const accessToken = getCookie(AuthParams.ACCESS_TOKEN);
+            if (!accessToken) {
+                return;
+            }
+            const {
+                data: { getMe },
+            } = await client.query<GetMeQuery>({ query: GET_ME });
+            dispatch(authActions.login(getMe as User));
+        } catch (e) {
+            dispatch(authActions.logout());
         }
-        const {
-            data: { getMe },
-        } = await client.query<GetMeQuery>({ query: GET_ME });
-        dispatch(authActions.login(getMe));
-    });
-
-// const logoutAsync = (): AppThunk => async (dispatch, getState) => {
-//     try {
-//         await userAPI.updateProfile({ isOnline: false })
-//         Cookie.remove('token')
-//         dispatch(authActions.logout())
-//         dispatch(postActions.clear())
-//         dispatch(chatActions.clear())
-//         dispatch(userActions.clearUser())
-//     } catch {
-//         console.error('Fail to logout')
-//     }
-// }
+    },
+);
 
 const { actions, reducer } = authSlice;
 

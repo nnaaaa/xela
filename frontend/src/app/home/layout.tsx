@@ -1,4 +1,4 @@
-import type {Metadata} from "next";
+import type { Metadata } from "next";
 // import localFont from "next/font/local";
 // import Providers from "@/components/providers";
 // import Header from "@/app/home/components/header";
@@ -20,8 +20,8 @@ export const metadata: Metadata = {
 };
 
 export default function HomeLayout({
-                                       children,
-                                   }: Readonly<{
+    children,
+}: Readonly<{
     children: React.ReactNode;
 }>) {
     return children;
