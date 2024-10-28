@@ -24,13 +24,9 @@ import { z } from "zod";
 import { LoginReqDto } from "@/gql/graphql";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/state/hooks";
 import { authActions } from "@/state/slices/auth.slice";
-import DASHBOARD_ROUTE from "@/lib/routes/dashboard.route";
 import ButtonWithLoading from "@/components/ui/button-with-loading";
-import { GraphQLError } from "graphql/error";
-import { unwrapResult } from "@reduxjs/toolkit";
 import { useSubmitError } from "@/app/auth/components/signupForm/useSubmitError";
 
 const loginSchema = z.object({
@@ -59,7 +55,7 @@ export function LoginForm() {
     useSubmitError(setError);
     async function onSubmit(loginDto: LoginReqDto) {
         await dispatch(authActions.loginWithPassword(loginDto));
-        await unwrapResult(dispatch(authActions.loginWithToken()));
+        await dispatch(authActions.loginWithToken());
     }
 
     return (
