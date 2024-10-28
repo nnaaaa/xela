@@ -14,7 +14,7 @@ stages:
 build:
   stage: build
   rules:
-    - if: $CI_COMMIT_BRANCH == 'master'
+    - if: $CI_COMMIT_BRANCH == 'main'
   before_script:
     - docker login -u "${REGISTRY_USER}" -p "${REGISTRY_PASSWORD}" "${CI_REGISTRY}"
   script:
