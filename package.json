@@ -1,0 +1,17 @@
+{
+  "name": "xela",
+  "version": "1.0.0",
+  "repository": "https://gitlab.com/nnaaaa/xela.git",
+  "author": "Nguyên Anh <nngguyen.anh@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "husky": "^9.1.6"
+  },
+  "scripts": {
+    "prepare": "husky",
+    "fe:dev": "cd frontend && yarn && yarn start && cd ..",
+    "be:dev": "cd backend && yarn && yarn dev && cd ..",
+    "fe:lint-staged": "cd frontend && yarn run lint-staged",
+    "be:lint-staged": "cd backend && yarn run lint-staged"
+  }
+}

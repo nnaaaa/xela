@@ -1,12 +1,12 @@
-import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Mutation, Resolver } from "@nestjs/graphql";
 import { AuthService } from "./auth.service";
-import { LoginArgs, LoginReqDto, LoginResDto } from "./dto/login.dto";
+import { LoginArgs, LoginResDto } from "./dto/login.dto";
 import { UseGuards } from "@nestjs/common";
 import { LocalGuard } from "./guards/local.guard";
 import { AuthUser } from "src/shared/decorators/auth-user.decorator";
 import { CreateOneUserArgs, User } from "src/entities/user";
 import { SignupResDto } from "./dto/signup.dto";
-import { VerifyArgs, VerifyDto } from "./dto/verify.dto";
+import { VerifyArgs } from "./dto/verify.dto";
 import { JwtGuard } from "./guards/jwt.guard";
 
 @Resolver(() => LoginResDto)

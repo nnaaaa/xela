@@ -19,7 +19,6 @@ import { CryptoModule } from "./modules/crypto/crypto.module";
                     "/graphql",
                 );
 
-
                 let devVariables = {};
                 if (process.env.NODE_ENV === "development") {
                     devVariables = {

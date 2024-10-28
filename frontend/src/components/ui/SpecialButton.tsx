@@ -69,11 +69,11 @@ export default function SpecialButton() {
                 }}
                 type="button"
             >
-        <span className="pointer-events-none flex h-7 flex-nowrap items-center gap-2 rounded-full bg-[#120d0e] px-3 py-1 font-medium text-[#eca5a7] text-sm tracking-tighter">
-          <span>Advanced button</span>
-          {/*<span className="h-5/6 w-px bg-neutral-700/50" />*/}
-          {/*<span className="text-neutral-500 ">Hover me</span>*/}
-        </span>
+                <span className="pointer-events-none flex h-7 flex-nowrap items-center gap-2 rounded-full bg-[#120d0e] px-3 py-1 font-medium text-[#eca5a7] text-sm tracking-tighter">
+                    <span>Advanced button</span>
+                    {/*<span className="h-5/6 w-px bg-neutral-700/50" />*/}
+                    {/*<span className="text-neutral-500 ">Hover me</span>*/}
+                </span>
             </button>
         </>
     );

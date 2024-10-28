@@ -40,7 +40,8 @@ export class AuthService {
         const existingUser = await this.userService.findByAccount(
             signupDto.email,
         );
-        if (existingUser) throw new ForbiddenException("Account already exists");
+        if (existingUser)
+            throw new ForbiddenException("Account already exists");
         const salt = await Bcrypt.genSalt();
         signupDto.password = await Bcrypt.hash(signupDto.password, salt);
         const { otp, expires } = otpGenerator.generate(

@@ -15,8 +15,12 @@ export default function AuthPage() {
         <AuthGuard>
             <Tabs defaultValue={TABS.LOGIN} className="w-[400px] space-y-4">
                 <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value={TABS.LOGIN} className="flex-grow">Login</TabsTrigger>
-                    <TabsTrigger value={TABS.SIGNUP} className="flex-grow">Signup</TabsTrigger>
+                    <TabsTrigger value={TABS.LOGIN} className="flex-grow">
+                        Login
+                    </TabsTrigger>
+                    <TabsTrigger value={TABS.SIGNUP} className="flex-grow">
+                        Signup
+                    </TabsTrigger>
                 </TabsList>
                 <TabsContent value={TABS.LOGIN}>
                     <LoginForm />

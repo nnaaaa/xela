@@ -3,8 +3,22 @@
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { LoginReqDto } from "@/gql/graphql";
@@ -19,9 +33,11 @@ import { GraphQLError } from "graphql/error";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { useSubmitError } from "@/app/auth/components/signupForm/useSubmitError";
 
-
 const loginSchema = z.object({
-    email: z.string().min(1, "please enter a valid email").email("Email is not valid"),
+    email: z
+        .string()
+        .min(1, "please enter a valid email")
+        .email("Email is not valid"),
     password: z.string().min(8, "Password must have more than 8 character"),
 });
 
@@ -33,11 +49,14 @@ export function LoginForm() {
             password: "",
         },
     });
-    const { formState: { errors }, setError } = form;
-    const { loading } = useAppSelector(state => state.auth);
+    const {
+        formState: { errors },
+        setError,
+    } = form;
+    const { loading } = useAppSelector((state) => state.auth);
     const dispatch = useAppDispatch();
 
-    useSubmitError(setError)
+    useSubmitError(setError);
     async function onSubmit(loginDto: LoginReqDto) {
         await dispatch(authActions.loginWithPassword(loginDto));
         await unwrapResult(dispatch(authActions.loginWithToken()));
@@ -48,12 +67,16 @@ export function LoginForm() {
             <CardHeader>
                 <CardTitle>Login</CardTitle>
                 <CardDescription>
-                    Welcome back! Please enter your email address and password to login.
+                    Welcome back! Please enter your email address and password
+                    to login.
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="space-y-4"
+                    >
                         <FormField
                             control={form.control}
                             name="email"
@@ -61,11 +84,16 @@ export function LoginForm() {
                                 <FormItem>
                                     <FormLabel>Email</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="example@gmail.com" {...field} />
+                                        <Input
+                                            placeholder="example@gmail.com"
+                                            {...field}
+                                        />
                                     </FormControl>
-                                    {!errors.email && <FormDescription>
-                                        This is your login account.
-                                    </FormDescription>}
+                                    {!errors.email && (
+                                        <FormDescription>
+                                            This is your login account.
+                                        </FormDescription>
+                                    )}
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -79,16 +107,21 @@ export function LoginForm() {
                                     <FormControl>
                                         <Input {...field} type="password" />
                                     </FormControl>
-                                    {!errors.password && <FormDescription>
-                                        Enter your password
-                                    </FormDescription>}
+                                    {!errors.password && (
+                                        <FormDescription>
+                                            Enter your password
+                                        </FormDescription>
+                                    )}
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
 
-
-                        <ButtonWithLoading loading={loading} type="submit" className="w-full">
+                        <ButtonWithLoading
+                            loading={loading}
+                            type="submit"
+                            className="w-full"
+                        >
                             Login
                         </ButtonWithLoading>
                         <div
@@ -98,7 +131,8 @@ export function LoginForm() {
                                 before:flex-1 before:border-t after:border-t
                                 before:border-t-border after:border-t-border
                                 before:me-6 after:flex-1
-                                after:ms-6 dark:text-white">
+                                after:ms-6 dark:text-white"
+                        >
                             OR
                         </div>
                         <Button variant="outline" className="w-full">
