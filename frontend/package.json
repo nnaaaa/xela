@@ -8,12 +8,14 @@
     "start": "next start",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\"",
-    "prepare": "husky",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "gen-graphql": "graphql-codegen --watch"
   },
   "dependencies": {
     "@apollo/client": "^3.11.8",
+    "@apollo/utils.keyvadapter": "^4.0.0",
     "@hookform/resolvers": "^3.9.0",
+    "@keyv/redis": "^3.0.1",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-checkbox": "^1.1.2",
     "@radix-ui/react-collapsible": "^1.1.1",
@@ -42,6 +44,7 @@
     "graphql-tag": "^2.12.6",
     "graphql-ws": "^5.16.0",
     "input-otp": "^1.2.4",
+    "keyv": "^5.1.2",
     "lucide-react": "^0.453.0",
     "moment": "^2.30.1",
     "net": "^1.0.2",

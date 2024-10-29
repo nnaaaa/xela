@@ -1,34 +1,30 @@
-# Build BASE
-FROM node:23-alpine as BASE
+FROM node:23-alpine as base
 
 WORKDIR /app
-COPY package.json yarn.lock ./
-RUN apk add --no-cache git \
-    && yarn install --frozen-lockfile \
+COPY package.json ./
+RUN yarn install --frozen-lockfile \
     && yarn cache clean
 
-# Build Image
-FROM node:23-alpine AS BUILD
+
+FROM node:23-alpine AS build
 
 WORKDIR /app
-COPY --from=BASE /app/node_modules ./node_modules
+COPY --from=base /app/node_modules ./node_modules
 COPY . .
-RUN apk add --no-cache git curl \
-    && yarn build \
+RUN yarn build \
     && rm -rf node_modules \
     && yarn install --production --frozen-lockfile --ignore-scripts --prefer-offline
 
 # Build production
-FROM node:23-alpine AS PRODUCTION
+FROM node:23-alpine AS production
 
 WORKDIR /app
 
-COPY --from=BUILD /app/public ./public
-COPY --from=BUILD /app/next.config.mjs ./
+COPY --from=build /app/next.config.mjs ./
 
 # Set mode "standalone" in file "next.config.js"
-COPY --from=BUILD /app/.next/standalone ./
-COPY --from=BUILD /app/.next/static ./.next/static
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
 
 EXPOSE 3000
 

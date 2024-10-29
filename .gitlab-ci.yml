@@ -1,24 +1,33 @@
-image: docker:latest
+image: docker:27.3
 
 services:
-  - docker:dind
+  - docker:27.3-dind
 
 variables:
-  IMAGE_TAG: 24.10.28
-  FRONTEND_IMAGE: xela_frontend
-  SERVER_IMAGE: xela_server
+  FRONTEND_IMAGE: frontend
+  SERVER_IMAGE: server
 
 stages:
     - build
 
-build:
+before_script:
+  - echo $CI_REGISTRY_PASSWORD | docker login $CI_REGISTRY_IMAGE -u $CI_REGISTRY_USER --password-stdin
+
+build-backend:
   stage: build
   rules:
     - if: $CI_COMMIT_BRANCH == 'main'
-  before_script:
-    - docker login -u "${REGISTRY_USER}" -p "${REGISTRY_PASSWORD}" "${CI_REGISTRY}"
   script:
-    - docker build -t $FRONTEND_IMAGE:$IMAGE_TAG ./frontend
-    - docker build -t $SERVER_IMAGE:$IMAGE_TAG ./server
-    - docker push $FRONTEND_IMAGE:$IMAGE_TAG
-    - docker push $SERVER_IMAGE:$IMAGE_TAG
+    - export VERSION=$(docker run --rm -v "$PWD":/app:ro -w /app node:slim node -p "require('./backend/package.json').version")
+    - docker build -t $CI_REGISTRY_IMAGE/$SERVER_IMAGE:$VERSION ./backend
+    - docker push $CI_REGISTRY_IMAGE/$SERVER_IMAGE:$VERSION
+
+
+build-frontend:
+  stage: build
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
+  script:
+    - export VERSION=$(docker run --rm -v "$PWD":/app:ro -w /app node:slim node -p "require('./frontend/package.json').version")
+    - docker build -t $CI_REGISTRY_IMAGE/$FRONTEND_IMAGE:$VERSION ./frontend
+    - docker push $CI_REGISTRY_IMAGE/$FRONTEND_IMAGE:$VERSION

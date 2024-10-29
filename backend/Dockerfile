@@ -1,18 +1,20 @@
-FROM node:20.18-alpine3.20 AS BASE
+FROM node:20.18-alpine3.20 AS base
 WORKDIR /app
 
 # Copy only the files needed to install dependencies
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+COPY package.json  ./
+
+COPY prisma/ ./prisma/
 
 # Install dependencies with the preferred package manager
-RUN yarn --frozen-lockfile;
+RUN yarn --frozen-lockfile && yarn run prisma-client;
 
 
 
-FROM node:20.18-alpine3.20 AS BUILD
+FROM node:20.18-alpine3.20 AS build
 WORKDIR /app
 
-COPY --from=BASE /app/node_modules ./node_modules
+COPY --from=base /app/node_modules ./node_modules
 
 # Copy the rest of the files
 COPY . .
@@ -21,19 +23,19 @@ COPY . .
 RUN yarn build;
 
 # Set NODE_ENV environment variable
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # Re-run install only for production dependencies
 RUN yarn --frozen-lockfile --production && yarn cache clean;
 
 
-FROM node:20.18-alpine3.20 AS PRODUCTION
+FROM node:20.18-alpine3.20 AS production
 WORKDIR /app
 
 # Copy the bundled code from the builder stage
-COPY --from=BUILD --chown=node:node /app/dist ./dist
-COPY --from=BUILD --chown=node:node /app/graphql/schema.gql ./dist/graphql/schema.gql
-COPY --from=BUILD --chown=node:node /app/node_modules ./node_modules
+COPY --from=build --chown=node:node /app/dist ./dist
+COPY --from=build --chown=node:node /app/graphql/schema.gql ./dist/graphql/schema.gql
+COPY --from=build --chown=node:node /app/node_modules ./node_modules
 
 # Use the node user from the image
 USER node
